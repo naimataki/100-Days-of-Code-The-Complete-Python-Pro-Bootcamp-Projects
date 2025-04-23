@@ -19,11 +19,14 @@ for i in range(6):
         tim.goto(x = -240, y = -100 + i*40)
         turtles.append(tim)
 
-pace = randint(0, 10)
 while is_race_on:
     for turtle in turtles:
-        print(turtle.color)
-        while turtle.xcor() != 230:
+        if turtle.xcor() < 223:
+            pace = randint(0, 10)
             turtle.forward(pace)
-
-screen.exitonclick()
+        else:
+            is_race_on = False
+            if user_bet == turtle.color()[0]:
+                print("You won! Good guess.")
+            else:
+                print("Not quite a good guess!")
