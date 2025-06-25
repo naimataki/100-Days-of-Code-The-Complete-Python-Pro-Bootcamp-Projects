@@ -20,6 +20,12 @@ while game_is_on:
     time.sleep(0.1)
     screen.update()
 
+    car_manager = CarManager()
+
+    if player.ycor() == 280:
+        player.goto(0, -280)
+        scoreboard.level_up()
+
 
 
 
