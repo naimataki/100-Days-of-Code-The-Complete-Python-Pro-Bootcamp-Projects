@@ -16,10 +16,6 @@ class CarManager(Turtle):
         self.penup()
         self.setheading(90)
         self.setx(320) 
-        self.sety(randint(-240, 240)) 
-        self.move_increment = MOVE_INCREMENT
-        self.move()
-
-    def move(self):
-        new_x = self.xcor() + self.move_increment
-        self.goto(new_x, self.ycor())
+        self.sety(randint(-250, 250)) 
+        self.move_speed = 0.1
+        self.forward(STARTING_MOVE_DISTANCE)
