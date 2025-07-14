@@ -8,12 +8,20 @@ screen.addshape(image)
 turtle.shape(image)
 data = pd.read_csv("US states game/50_states.csv")
 guessed_states = []
+all_states = data.state.to_list()
 
 while len(guessed_states) < 50:
     answer_state = screen.textinput(title="Guess the State", prompt=f"{len(guessed_states)}/50 States Correct").title()
     #print(answer_state)
-    all_states = data.state.to_list()
-
+    
+    if answer_state == "Exit":
+        missing_states = []
+        for state in all_states:
+            if state not in guessed_states:
+                missing_states.append(state)
+        new_data = pd.DataFrame(missing_states)
+        #print(missing_states)
+        break
     if answer_state in all_states:
         guessed_states.append(answer_state)
         t = turtle.Turtle()
