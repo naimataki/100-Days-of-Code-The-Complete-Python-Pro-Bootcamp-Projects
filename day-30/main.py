@@ -2,11 +2,24 @@
 #with open("a_file.txt") as file:
 #    file.read()
 
-try:
-    file = open("day-30/a_file.txt")
-except:
-    open("day-30/a_file.txt", "w")
-    #print("There was an error")
+#try:
+#    file = open("day-30/a_file.txt")
+#    a_dictionary = {"key": "value"}
+#    print(a_dictionary["non_existent_key"])
+#except FileNotFoundError:
+#    file = open("day-30/a_file.txt", "w")
+#    file.write("Something")
+#    #print("There was an error")
+#except KeyError as error_message:
+#    print(f"The key {error_message} does not exist.")
+#else:
+#    content = file.read()
+#    print(content)
+#finally:
+#    #file.close()
+#    #print("File was closed.")
+#    raise KeyError("This is an error that I made up.")
+
 
 #KeyError
 #a_dictionary = {"key": "value"}
@@ -19,3 +32,12 @@ except:
 #TypeError
 #text = "abc"
 #print(text + 5)
+
+height = float(input("Height: "))
+weight = int(input("Weight: "))
+
+if height > 3:
+    raise ValueError("Human Height should not be over 3 meters.")
+
+bmi = weight / height ** 2
+print(bmi)
