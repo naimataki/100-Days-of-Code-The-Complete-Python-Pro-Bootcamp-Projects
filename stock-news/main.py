@@ -1,8 +1,16 @@
+import os
 import requests
+from twilio.rest import Client
+from dotenv import load_dotenv
 
+load_dotenv()
+
+account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+auth_token = os.getenv("TWILIO_AUTH_TOKEN")
+stock_apikey =os.getenv("STOCK_API_KEY")
+news_apikey = os.getenv("NEWS_API_KEY")
 STOCK_NAME = "TSLA"
 COMPANY_NAME = "Tesla Inc"
-API_KEY = "18CKYRHLDNQEB04R"
 
 STOCK_ENDPOINT = "https://www.alphavantage.co/query"
 NEWS_ENDPOINT = "https://newsapi.org/v2/everything"
@@ -12,17 +20,17 @@ NEWS_ENDPOINT = "https://newsapi.org/v2/everything"
 
 #TODO 1. - Get yesterday's closing stock price. Hint: You can perform list comprehensions on Python dictionaries. e.g. [new_value for (key, value) in dictionary.items()]
 
-params = {
+stock_params = {
     "function": "TIME_SERIES_DAILY",
     "symbol": STOCK_NAME,
-    "apikey": API_KEY
+    "apikey": stock_apikey
 }
 
-response = requests.get(STOCK_ENDPOINT, params=params)
-response.raise_for_status()
+stock_response = requests.get(STOCK_ENDPOINT, params=stock_params)
+stock_response.raise_for_status()
 #print(response.json())
 
-stock_data = response.json()
+stock_data = stock_response.json()
 #print(stock_data["Time Series (Daily)"]["2026-01-22"]["4. close"])
 
 closing_prices = [
@@ -45,23 +53,49 @@ positive_difference = abs(yesterday_closing - day_before_yesterday_closing)
 percentage_difference = (positive_difference / yesterday_closing) * 100
 
 #TODO 5. - If TODO4 percentage is greater than 5 then print("Get News").
+if percentage_difference > 5:
+    print("Get News")
 
     ## STEP 2: https://newsapi.org/ 
     # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
 
 #TODO 6. - Instead of printing ("Get News"), use the News API to get articles related to the COMPANY_NAME.
 
+news_params = {
+    "apiKey": news_apikey,
+    "q": COMPANY_NAME,
+    "language": "en"
+}
+
+news_response = requests.get(NEWS_ENDPOINT, params=news_params)
+news_response.raise_for_status()
+#print(response.json())
+news_data = news_response.json()
+
 #TODO 7. - Use Python slice operator to create a list that contains the first 3 articles. Hint: https://stackoverflow.com/questions/509211/understanding-slice-notation
 
+first_articles = news_data["articles"][:3]
 
     ## STEP 3: Use twilio.com/docs/sms/quickstart/python
     #to send a separate message with each article's title and description to your phone number. 
 
 #TODO 8. - Create a new list of the first 3 article's headline and description using list comprehension.
 
+first_articles_simple = [
+    (article["title"], article["description"])
+    for article in first_articles
+]
+
+print(first_articles_simple)
+
 #TODO 9. - Send each article as a separate message via Twilio. 
 
-
+client = Client(account_sid, auth_token)
+message = client.messages.create(
+    from_="whatsapp:",
+    body=f"{STOCK_NAME}: {percentage_difference}%",
+    to="whatsapp:"
+)
 
 #Optional TODO: Format the message like this: 
 """
