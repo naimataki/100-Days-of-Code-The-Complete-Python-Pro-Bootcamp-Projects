@@ -50,52 +50,59 @@ positive_difference = abs(yesterday_closing - day_before_yesterday_closing)
 
 #TODO 4. - Work out the percentage difference in price between closing price yesterday and closing price the day before yesterday.
 
-percentage_difference = (positive_difference / yesterday_closing) * 100
+percentage_difference = round((positive_difference / day_before_yesterday_closing) * 100, 2)
 
 #TODO 5. - If TODO4 percentage is greater than 5 then print("Get News").
-if percentage_difference > 5:
-    print("Get News")
+if percentage_difference >= 1:
+    #print("Get News")
 
     ## STEP 2: https://newsapi.org/ 
     # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
 
 #TODO 6. - Instead of printing ("Get News"), use the News API to get articles related to the COMPANY_NAME.
 
-news_params = {
-    "apiKey": news_apikey,
-    "q": COMPANY_NAME,
-    "language": "en"
-}
+    news_params = {
+        "apiKey": news_apikey,
+        "qInTitle": COMPANY_NAME,
+        "language": "en"
+    }
 
-news_response = requests.get(NEWS_ENDPOINT, params=news_params)
-news_response.raise_for_status()
-#print(response.json())
-news_data = news_response.json()
+    news_response = requests.get(NEWS_ENDPOINT, params=news_params)
+    news_response.raise_for_status()
+    #print(response.json())
+    news_data = news_response.json()
 
 #TODO 7. - Use Python slice operator to create a list that contains the first 3 articles. Hint: https://stackoverflow.com/questions/509211/understanding-slice-notation
 
-first_articles = news_data["articles"][:3]
+    first_articles = news_data["articles"][:3]
 
     ## STEP 3: Use twilio.com/docs/sms/quickstart/python
     #to send a separate message with each article's title and description to your phone number. 
 
 #TODO 8. - Create a new list of the first 3 article's headline and description using list comprehension.
 
-first_articles_simple = [
-    (article["title"], article["description"])
-    for article in first_articles
-]
+    first_articles_simple = [
+        (article["title"], article["description"])
+        for article in first_articles
+    ]
 
-print(first_articles_simple)
+#print(first_articles_simple)
 
 #TODO 9. - Send each article as a separate message via Twilio. 
 
-client = Client(account_sid, auth_token)
-message = client.messages.create(
-    from_="whatsapp:",
-    body=f"{STOCK_NAME}: {percentage_difference}%",
-    to="whatsapp:"
-)
+    sign = ""
+    if yesterday_closing - day_before_yesterday_closing > 0:
+        sign = "🔺"
+    else:
+        sign = "🔻"
+
+    for (title, description) in first_articles_simple:
+        client = Client(account_sid, auth_token)
+        message = client.messages.create(
+            from_="whatsapp:",
+            body=f"{STOCK_NAME}: {sign}{percentage_difference}%\nHeadline: {title}\nBrief: {description}",
+            to="whatsapp:"
+        )
 
 #Optional TODO: Format the message like this: 
 """
