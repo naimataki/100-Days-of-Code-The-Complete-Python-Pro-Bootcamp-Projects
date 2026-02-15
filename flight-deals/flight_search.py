@@ -15,12 +15,28 @@ class FlightSearch:
         self._token = self._get_new_token()
 
     def get_destination_code(self, city_name):
+        print(f"Using this token to get destination {self._token}")
+        headers = {"Authorization": f"Bearer {self._token}"}
         params = {
-            "keyword": city_name
+            "keyword": city_name,
+            "max": "2",
+            "include": "AIRPORTS"
         }
-        response = requests.get(url="https://test.api.amadeus.com/v1/reference-data/locations/cities")
+        response = requests.get(url="https://test.api.amadeus.com/v1/reference-data/locations/cities",
+                                params=params,
+                                headers=headers)
+        
+        print(f"Status code {response.status_code}. Airport IATA: {response.text}")
+        try:
+            code = response.json()["data"][0]["iataCode"]
+        except IndexError:
+            print(f"IndexError: No airport code found for {city_name}.")
+            return "N/A"
+        except KeyError:
+            print(f"KeyError: No airport code found for {city_name}.")
+            return "Not Found"
         #code = "TESTING"
-        #return code
+        return code
     
     def _get_new_token(self):
         header = {
