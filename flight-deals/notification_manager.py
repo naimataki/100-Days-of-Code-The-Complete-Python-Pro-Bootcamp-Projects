@@ -21,6 +21,6 @@ class NotificationManager:
         message = self.client.messages.create(
             from_=f"whatsapp:{os.environ['TWILIO_VIRTUAL_NUMBER']}",
             body=message_body,
-            to=f"whatsapp:{os.environ['TWILIO_VIRTUAL_NUMBER']}"
+            to=f"whatsapp:{os.environ['TWILIO_VERIFIED_NUMBER']}"
         )
         print(message.sid)
