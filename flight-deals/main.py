@@ -47,6 +47,8 @@ for destination in sheet_data:
             to_time=six_month_from_today,
             is_direct=False
     )
+    cheapest_flight = find_cheapest_flight(stopover_flights)
+    print(f"Cheapest indirect flight price is: £{cheapest_flight.price}")
 
     if cheapest_flight.price < destination["lowestPrice"]:
         print(f"Lower price flight found to {destination['city']}!")
@@ -56,3 +58,7 @@ for destination in sheet_data:
                         f"from {cheapest_flight.origin_airport} to {cheapest_flight.destination_airport}, "
                         f"on {cheapest_flight.out_date} until {cheapest_flight.return_date}."
         )
+
+emails = data_manager.get_customer_emails()
+customer_email_list = [row["whatIsYourEmail?"] for row in emails]
+
