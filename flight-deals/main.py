@@ -26,6 +26,9 @@ data_manager.update_destination_codes()
 tomorrow = datetime.now() + timedelta(days=1)
 six_month_from_today = datetime.now() + timedelta(days=(6 * 30))
 
+emails = data_manager.get_customer_emails()
+customer_email_list = [row["whatIsYourEmail?"] for row in emails]
+
 for destination in sheet_data:
     print(f"Getting flights for {destination['city']}...")
     flights = flight_search.check_flights(
@@ -50,15 +53,23 @@ for destination in sheet_data:
     cheapest_flight = find_cheapest_flight(stopover_flights)
     print(f"Cheapest indirect flight price is: £{cheapest_flight.price}")
 
-    if cheapest_flight.price < destination["lowestPrice"]:
+    if cheapest_flight.price != "N/A" and cheapest_flight.price < destination["lowestPrice"]:
         print(f"Lower price flight found to {destination['city']}!")
-
-        notification_manager.send_whatsapp(
-            message_body=f"Low price alert! Only £{cheapest_flight.price} to fly "
-                        f"from {cheapest_flight.origin_airport} to {cheapest_flight.destination_airport}, "
+        if cheapest_flight.stops == 0:
+            message = f"Low price alert! Only £{cheapest_flight.price} to fly "\
+                        f"from {cheapest_flight.origin_airport} to {cheapest_flight.destination_airport}, "\
                         f"on {cheapest_flight.out_date} until {cheapest_flight.return_date}."
-        )
+        else:
+            message= f"Low price alert! Only £{cheapest_flight.price} to fly, with  {cheapest_flight.stops} stop(s) "\
+                        f"from {cheapest_flight.origin_airport} to {cheapest_flight.destination_airport}, "\
+                        f"on {cheapest_flight.out_date} until {cheapest_flight.return_date}."
 
-emails = data_manager.get_customer_emails()
-customer_email_list = [row["whatIsYourEmail?"] for row in emails]
+        #notification_manager.send_whatsapp(
+        #    message_body=f"Low price alert! Only £{cheapest_flight.price} to fly "
+        #                f"from {cheapest_flight.origin_airport} to {cheapest_flight.destination_airport}, "
+        #                f"on {cheapest_flight.out_date} until {cheapest_flight.return_date}."
+        #)
+
+        notification_manager.send_emails(to_email=customer_email_list, message_body=message)
+
 

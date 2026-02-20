@@ -11,7 +11,7 @@ class FlightData:
 def find_cheapest_flight(data):
     if data is None or not data['data']:
         print("No flight data")
-        return FlightData("N/A", "N/A", "N/A", "N/A", "N/A")
+        return FlightData("N/A", "N/A", "N/A", "N/A", "N/A", "N/A")
 
     first_flight =  data["data"][0]
     lowest_price = float(first_flight["price"]["grandTotal"])

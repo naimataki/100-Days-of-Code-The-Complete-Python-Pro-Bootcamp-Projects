@@ -8,8 +8,8 @@ load_dotenv()
 class DataManager:
     #This class is responsible for talking to the Google Sheet.
     def __init__(self):
-        self.prices_endpoint = os.environ["PRICES_SHEETY_ENDPOINT"]
-        self.users_endpoint = os.environ["PRICES_SHEETY_ENDPOINT"]
+        self.prices_endpoint = os.environ["PRICES_SHEET_ENDPOINT"]
+        self.users_endpoint = os.environ["USERS_SHEET_ENDPOINT"]
         self.destination_data = {}
         self.user_data = {}
 
