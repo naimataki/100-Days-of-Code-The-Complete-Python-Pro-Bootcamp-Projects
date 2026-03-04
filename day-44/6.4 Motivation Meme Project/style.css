@@ -1,5 +1,6 @@
 body {
     background-color: black;
+    margin-top: 50px;
 }
 
 .text {
@@ -13,4 +14,10 @@ body {
 
 img {
     border: 5px solid white;
+    width: 100%;
+}
+
+div {
+    width: 50%;
+    margin-left: 25%;
 }
