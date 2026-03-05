@@ -25,3 +25,8 @@ heading = soup.find(name="h1", id="name")
 
 section_heading = soup.find(name="h3", class_="heading")
 print(section_heading.getText()) #section's text
+
+company_url = soup.select_one(selector="p a")
+print(company_url)
+
+print(soup.select(".heading"))
