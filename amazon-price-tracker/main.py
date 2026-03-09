@@ -10,7 +10,7 @@ EMAIL = os.environ['EMAIL']
 PASSWORD = os.environ['password']
 SMTP_ADDRESS = os.environ['SMTP_ADDRESS']
 BUY_PRICE = 100
-url = "https://appbrewery.github.io/instant_pot/"
+url = "https://www.amazon.com/dp/B075CYMYK6?ref_=cm_sw_r_cp_ud_ct_FM9M699VKHTT47YD50Q6&th=1"
 
 headers= {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7", 
@@ -28,7 +28,7 @@ headers= {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0", 
   }
 
-response = requests.get("https://appbrewery.github.io/instant_pot/", headers=headers)
+response = requests.get(url=url, headers=headers)
 amazon_web_page = response.text
 
 soup = BeautifulSoup(amazon_web_page, "html.parser")
@@ -38,6 +38,7 @@ fraction_price = soup.find(name="span" ,class_="a-price-fraction").getText()
 price = float(f"{whole_price}{fraction_price}")
 product_title = soup.find(id="productTitle").get_text().strip()
 
+print(soup.prettify())
 print(price)
 
 if price < BUY_PRICE:
