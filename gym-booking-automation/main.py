@@ -33,8 +33,10 @@ login_button.click()
 
 # Fill in your email and password
 email = driver.find_element(By.ID, value="email-input")
+email.clear()
 email.send_keys(ACCOUNT_EMAIL)
 password = driver.find_element(By.ID, value="password-input")
+email.clear()
 password.send_keys(ACCOUNT_PASSWORD)
 
 # Submit the form
@@ -44,9 +46,21 @@ submit_button.click()
 # Verify you're logged in by checking for the "Class Schedule" page
 wait.until(EC.presence_of_element_located((By.ID, "schedule-page")))
 
-# Find the next Tuesday 6pm class (any type - Yoga, Spin, or HIIT)
-booking_button = driver.find_element(By.CSS_SELECTOR, value="div[id='day-group-tue'] button[id=^'1800']")
-# Click the "Book Class" or "Join Waitlist" button
-booking_button.click()
+# Find all class cards
+class_cards = driver.find_elements(By.CSS_SELECTOR, value="div[id^='class-card-']")
+
+for card in class_cards:
+    #Get the day title from the parent day group
+    day_group = card.find_element(By.XPATH, "./ancestor::div[contains(@id, 'day-group-')]")
+    day_title = day_group.find_element(By.TAG_NAME, "h2").text
+
+    # Check if it's a Tuesday:
+    if "Tue" in day_title:
+        #Check if it's a 6pm class
+        time_text = card.find_element(By.CSS_SELECTOR, "p[id^='class-time-']").text
+        if "6:00" in time_text:
+            class_name = card.find_element(By.CSS_SELECTOR, "h3[id^='class-time-']").text
+
+
 
 #driver.quit()
