@@ -53,13 +53,15 @@ wait.until(EC.presence_of_element_located((By.ID, "schedule-page")))
 # Find all class cards
 class_cards = driver.find_elements(By.CSS_SELECTOR, "div[id^='class-card-']")
 
+processed_classes = []
+
 for card in class_cards:
     # Get the day title from the parent day group
     day_group = card.find_element(By.XPATH, "./ancestor::div[contains(@id, 'day-group-')]")
     day_title = day_group.find_element(By.TAG_NAME, "h2").text
 
     # Check if this is a Tuesday or Thursday
-    if "Tue" or "Thu" in day_title:
+    if "Tue" in day_title or "Thu" in day_title:
         # Check if this is a 6pm class
         time_text = card.find_element(By.CSS_SELECTOR, "p[id^='class-time-']").text
         if "6:00 PM" in time_text:
@@ -68,30 +70,64 @@ for card in class_cards:
 
             # Find and click the book button
             button = card.find_element(By.CSS_SELECTOR, "button[id^='book-button-']")
+
+            class_info = f"{class_name} on {day_title}"
             if button.text == "Booked":
-                print(f"✓ Already booked: {class_name} on {day_title}")
+                print(f"✓ Already booked: {class_info}")
                 already_booked += 1
+                processed_classes.append(f"[Booked] {class_info}")
             elif button.text == "Waitlisted":
-                print(f"✓ Already on waitlist: {class_name} on {day_title}")
+                print(f"✓ Already on waitlist: {class_info}")
                 already_booked += 1
+                processed_classes.append(f"[Waitlisted] {class_info}")
             elif button.text == "Book Class":
                 button.click()
-                print(f"✓ Successfully booked: {class_name} on {day_title}")
+                print(f"✓ Successfully booked: {class_info}")
                 classes_booked += 1
                 # Wait a bit for the button state to update
+                processed_classes.append(f"[New Booking] {class_info}")
                 time.sleep(0.5)
             elif button.text == "Join Waitlist":
                 button.click()
-                print(f"✓ Joined waitlist for: {class_name} on {day_title}")
+                print(f"✓ Joined waitlist for: {class_info}")
                 wailists_joined += 1
                 # Wait a bit for the button state to update
+                processed_classes.append(f"[New Waitlist] {class_info}")
                 time.sleep(0.5)
 
-print("--- BOOKING SUMMARY ---")
-print(f"Classes booked: {classes_booked}")
-print(f"Waitlists joined: {wailists_joined}")
-print(f"Already booked/waitlisted: {already_booked}")
-print(f"Total Tuesday 6am classes processed: {classes_booked + wailists_joined + already_booked}")
+bookings = driver.find_element(By.ID, "my-bookings-link")
+bookings.click()
+wait.until(EC.presence_of_element_located((By.ID, "my-bookings-page")))
+booked_cards = driver.find_elements(By.CSS_SELECTOR, "div[id^='booking-card-']")
+
+
+#print("\n--- BOOKING SUMMARY ---")
+#print(f"Classes booked: {classes_booked}")
+#print(f"Waitlists joined: {wailists_joined}")
+#print(f"Already booked/waitlisted: {already_booked}")
+#print(f"Total Tuesday 6am classes processed: {classes_booked + wailists_joined + already_booked}")
+
+#print("\n--- DETAILED CLASS LIST ---")
+#for class_detail in processed_classes:
+#    print(f" • {class_detail}")
+
+print(f"\n--- Total Tuesday/Thursday 6pm classes: {classes_booked + wailists_joined + already_booked}---")
+print("\n--- VERIFYING ON MY BOOKINGS PAGE ---")
+for card in booked_cards:
+    title = card.find_element(By.TAG_NAME, "h3").text
+    print(f"✓ Verified: {title}")
+
+print("\n--- VERIFICATION RESULT ---")
+print(f"Expected: {classes_booked + wailists_joined + already_booked} bookings")
+print(f"Found: {len(booked_cards)} bookings")
+
+if classes_booked + wailists_joined + already_booked == len(booked_cards):
+    print("✅ SUCCESS: All bookings verified!")
+else:
+    print(f"❌ MISMATCH: Missing {len(booked_cards) - (classes_booked + wailists_joined + already_booked)} bookings")
+
+
+
 
 
 
