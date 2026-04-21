@@ -148,7 +148,7 @@ print("\n--- VERIFICATION RESULT ---")
 print(f"Expected: {classes_booked + wailists_joined + already_booked} bookings")
 print(f"Found: {len(all_cards)} bookings")
 
-if classes_booked + wailists_joined + already_booked == len(booked_cards):
+if classes_booked + wailists_joined + already_booked == len(all_cards):
     print("✅ SUCCESS: All bookings verified!")
 else:
     print(f"❌ MISMATCH: Missing {len(all_cards) - (classes_booked + wailists_joined + already_booked)} bookings")
